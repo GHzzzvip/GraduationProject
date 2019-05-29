@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}
+status
+{% endblock %}
+
+{% block content %}
+<h1>Status</h1>
+
+<div class="container">
+    <table class="table">
+        <thead class="thead-inverse">
+            <tr>
+                <th>OJ</th>
+                <th>ID</th>
+                <th>Result</th>
+                <th>Language</th>
+                <th>Memoryused</th>
+                <th>timeused</th>
+                <th>SubmitTime</th>
+                <th>Username</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for status in Status %}
+            <tr>
+                <td class="align-middle">
+                    {{ status.p_oj }}
+                </td>
+                <td class="align-middle">
+                    {{ status.p_id }}
+                </td>
+                <td class="align-middle">
+                    {{ status.p_result }}
+                </td>
+                <td class="align-middle">
+                    {% if user.username == status.username %}
+                    <a href="{% url 'codeView' status.pk %}"> <!--高亮查看代码-->
+                        {{ status.Language}}
+                    </a>
+                    {% else %}
+                        {{ status.Language}}
+                    {% endif %}
+                </td>
+                
+                <td class="align-middle">
+                    {{ status.p_memoryused }} kb
+                </td>
+                <td class="align-middle">
+                    {{ status.p_timeused }} ms
+                </td>
+                <td class="align-middle">
+                    {{ status.submitTime }}
+                </td>
+                
+                <td class="align-middle">
+                    {{ status.username }}
+            </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

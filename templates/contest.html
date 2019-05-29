@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}
+contest
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <a data-toggle="modal" data-target="#modal-contest-create" href="#" class="btn btn-success pull-right">
+        Add Contest
+    </a>
+    <table class="table">
+        <thead class="thead-inverse">
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Begin Time</th>
+                <th>End Time</th>
+                <th>Manager</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contest in contests %}
+            <tr>
+                <td class="align-middle">
+                    {{ contest.pk }}
+                </td>
+                <td class="align-middle">
+                    <a href="{% url 'contestOverview' contest.pk %}">
+                        {{ contest.c_title }}
+                    </a>
+                </td>
+                <td class="align-middle">
+                    {{ contest.time_start }}
+                </td>
+                <td class="align-middle">
+                    {{ contest.time_end }}
+                </td>
+                <td class="align-middle">
+                    {{ contest.c_manager }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    function handleEnterAddProblem(event) {
+        if (event.keyCode == 13) {
+            addProblem(event);
+        }
+    }
+
+    function addProblem(event) {
+        event.preventDefault();
+        var soj = document.getElementById("form-soj");
+        var sid = document.getElementById("form-sid");
+        var alias = document.getElementById("form-alias");
+        if (!soj.value || !sid.value) {
+            return;
+        }
+        var tr = document.createElement("tr");
+        tr.innerHTML = "<td>" + soj.value + "-" + sid.value + "</td>" +
+            "<td>" + alias.value + "</td>" +
+            "<td><a onclick='delProblem(event)' href='#'>Delete</a></td>"
+        document.getElementById("table-problem").appendChild(tr);
+        sidInt = parseInt(sid.value);
+        if (sidInt)
+            sid.value = sidInt + 1;
+        alias.value = "";
+    }
+
+    function delProblem(event) {
+        event.preventDefault();
+        document.getElementById("table-problem").removeChild(event.target.parentNode.parentNode);
+    }
+
+    function handleCreateContestSubmit(event) {
+        event.preventDefault();
+        var tableProblem = document.getElementById("table-problem");
+        var problemListStr = ""
+        for (var i = 0; i < tableProblem.childNodes.length; i++) {
+            problemListStr += tableProblem.childNodes[i].childNodes[0].innerText;
+            problemListStr += "|";
+            problemListStr += tableProblem.childNodes[i].childNodes[1].innerText;
+            problemListStr += "\n";
+        }
+        document.getElementById("form-problem").value = problemListStr;
+        document.getElementById("contest-create-form").submit();
+    }
+</script>
+
+<div class="modal fade" id="modal-contest-create">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Create Contest</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form id="contest-create-form" action="{% url 'contest' %}" method="POST" onsubmit="handleCreateContestSubmit(event)">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <table class="table">
+                        <tbody>
+                            <h5>Title:</h5>
+                            <input type="text" name="title" autofocus="autofocus" class="form-control" />
+                            <h5>Time:</h5>
+                            <div class="form-inline">
+                                <input type="text" name="begintime" onfocus="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})"
+                                    placeholder="YYYY-MM-DD hh:mm:ss" class="form-control" />
+                                &nbsp; - &nbsp;
+                                <input type="text" name="endtime" onfocus="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})"
+                                    placeholder="YYYY-MM-DD hh:mm:ss" class="form-control" />
+                            </div>
+                            <h5>Description:</h5>
+                            <textarea name="description" rows="3" class="form-control"></textarea>
+                            <h5>Problems:</h5>
+                            <input id="form-problem" name="problem" type="hidden" />
+                            <div class="form-inline">
+                                <select id="form-soj" class="form-control">
+                                    <option value="SDIBT">SDIBT</option>
+                                    <option value="POJ">POJ</option>
+                                    <option value="HDU">HDU</option>
+                                </select>&nbsp;
+                                <input id="form-sid" type="number" min="1000" max="9999" onkeypress="handleEnterAddProblem(event)"
+                                    placeholder="ID" class="form-control" />&nbsp;
+                                <input id="form-alias" type="text" onkeypress="handleEnterAddProblem(event)"
+                                    placeholder="Alias" class="form-control" />&nbsp;
+                                <a onclick="addProblem(event)" href="#" class="btn btn-success pull-right">Add</a>
+                            </div>
+                            <table class="table table-striped">
+                                <thead>
+                                    <th>Problem</th>
+                                    <th>Alias</th>
+                                    <th>#</th>
+                                </thead>
+                                <tbody id="table-problem"></tbody>
+                            </table>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

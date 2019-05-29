@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="text-center text-info">{{ contest.c_title }}</h1>
+
+
+<ul class="nav nav-pills">
+    <li class="nav-item">
+        <a class="nav-link active" href="{% url 'contestOverview' contest.pk %}">Overview</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'contestProblemDetail' c_Problems.0.pk %}">Problem</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'contestStatus' contest.pk %}">Status</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'contestRank' contest.pk %}">Rank</a>
+    </li>
+</ul>
+<div class="container">
+    <div class="text-center ">
+        <strong>BeginTime:</strong> &nbsp; {{contest.time_start}}<br>
+        <strong>EndTime:&nbsp;&nbsp;</strong> {{contest.time_end}}<br>
+        <strong>Manager:</strong>&nbsp;{{contest.c_manager}}<br>
+    </div>
+</div>
+
+<table class="table table-sm table-bordered">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">ID</th>
+            <th scope="col">Title</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for problem in c_Problems %}
+        <tr>
+            <th scope="row"></th>
+            <td><a href="{% url 'contestProblemDetail' problem.pk %}">{{problem.p_oj}} - {{problem.p_id}}</a></td>
+            <td>{{problem.p_title}}</td>
+        </tr>
+         {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

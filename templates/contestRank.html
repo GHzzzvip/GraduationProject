@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="text-center text-info">{{ contest.c_title }}</h1>
+
+
+<ul class="nav nav-pills">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'contestOverview' contest.pk %}">Overview</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link " href="{% url 'contestProblemDetail' cProblems.0.pk %}">Problem</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link " href="{% url 'contestStatus' contest.pk %}">Status</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="{% url 'contestRank' contest.pk %}">Rank</a>
+    </li>
+</ul>
+<table class="table table-bordered text-center">
+    <thead>
+        <tr>
+            <th class="text-center">Rank</th>
+            <th class="text-center">User</th>
+            <th class="text-center">AC / Total</th>
+            <th class="text-center">Penalty</th>
+            {% for i in contestProblemDict %}
+            <th class="text-center">{{i}}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in Rank %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{user.username}}</td>
+            <td>{{user.Accepted}}/{{user.Total}}</td>
+            <td>{{ user.Penalty}}</td>
+            {% for problem in user.Problems %}
+                {% if problem.firstAcceptTime != None %}
+                    {% if problem.problemFirstAccept == True %}
+                        <td class="bg-success" >
+                    {% else %}
+                        <td bgcolor="a9f5af">
+                    {% endif %}
+                            {{problem.firstAcceptTime}}
+                            {% if problem.error > 0 %}
+                            (-{{problem.error}})
+                            {% endif %}
+                        </td>
+                {% elif problem.error > 0 %}
+                        <td class="bg-danger">(-{{problem.error}})</td>
+                {% else %} <td></td>
+                {% endif %}    
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

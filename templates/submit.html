@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form action="{% url 'submit_post' p_dsp.pk %}" method="post">
+    {% csrf_token %}
+    <div class="container">
+        <table>
+            <tbody>
+                <tr>
+                    <td>Problem:</td>
+                    <td><b>{{ p_dsp.p_oj }} {{p_dsp.p_id}}</b> - <a href="{% url 'problem_description' p_dsp.pk %}">{{p_dsp.p_title}}</a></td>
+                </tr>
+                <tr>
+                    <td>Language:</td>
+                    <td>
+                        <select name="Language">
+                            <option value="0">C</option>
+                            <option value="1">C++</option>
+                            <option value="2">Java</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <textarea id="id_code" name="Code" rows="5"></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <a href="{% url 'status' %}">
+        <button type="submit" class="btn btn-success">Submit</button>
+    </a>
+</form>
+{% endblock %}
